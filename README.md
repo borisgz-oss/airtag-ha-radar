@@ -117,6 +117,19 @@ To uninstall at any time:
 
 ---
 
+## ☕ Support & Sponsorship
+
+If this project saved your car, recovered lost luggage, or improved your Home Assistant setup, consider supporting its development:
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/borisgz-oss)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-yellow?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/borisgz)
+
+**Crypto (USDT TRC20 / ERC20):**  
+`Contact author or add your wallet address here`
+
+---
+
 ## 📄 License
 
 Distributed under the [MIT License](LICENSE).
+

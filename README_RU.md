@@ -117,6 +117,16 @@ cat /tmp/airtag-ha-sync.log
 
 ---
 
+## ☕ Поддержка и донаты
+
+Если этот проект помог вам отслеживать машину, спас потерянный багаж или просто сделал жизнь проще, вы можете поддержать автора:
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/borisgz-oss)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-yellow?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/borisgz)
+
+---
+
 ## 📄 Лицензия
 
 Проект распространяется под открытой лицензией [MIT License](LICENSE).
+
