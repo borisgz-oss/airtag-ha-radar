@@ -18,3 +18,8 @@ __pycache__/
 .AppleDouble
 .LSOverride
 Thumbs.db
+
+# App Builds
+macos-app/build/
+*.app
+*.zip
