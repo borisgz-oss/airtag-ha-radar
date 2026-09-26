@@ -1,5 +1,7 @@
 # 🛰️ AirTag HA Radar
 
+[English](README.md) | [Русский](README_RU.md)
+
 > **Privacy-first, zero-credential Apple AirTag to Home Assistant bridge with high-aesthetic Bento Dashboards, Parking Hub, and Movement Trails.**
 
 [![macOS](https://img.shields.io/badge/macOS-Sonoma%20%7C%20Sequoia-black?logo=apple)](https://apple.com)
