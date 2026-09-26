@@ -1,6 +1,6 @@
 # 🛰️ AirTag HA Radar
 
-[English](README.md) | [Русский](README_RU.md)
+[English](README.md) | [Українська](README_UA.md) | [Русский](README_RU.md)
 
 > **Приватный мост между Apple AirTag и Home Assistant с нулевыми рисками для Apple ID, готовыми Bento-дашбордами, парковочным радаром и историей маршрутов.**
 
