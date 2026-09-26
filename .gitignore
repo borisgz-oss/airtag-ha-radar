@@ -1,0 +1,20 @@
+# Credentials & Local Configuration (NEVER COMMIT)
+config.yaml
+.env
+.env.local
+*.secret
+*.token
+
+# Local Cache & State
+airtag_geocache.json
+*.cache
+*.log
+
+# Python & OS Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db

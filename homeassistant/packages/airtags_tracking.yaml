@@ -1,0 +1,106 @@
+# ==============================================================================
+# Home Assistant Package: AirTags Tracking & Telemetry
+# Place this file in `includes/packages/airtags_tracking.yaml` or include in configuration.yaml
+# ==============================================================================
+
+template:
+  - sensor:
+      # ------------------------------------------------------------------------
+      # Car Duration in Zone Sensor
+      # ------------------------------------------------------------------------
+      - name: "AirTag Car Duration"
+        unique_id: airtag_car_duration
+        icon: mdi:timer-outline
+        state: >-
+          {% set t = states.device_tracker.airtag_car %}
+          {% if t is defined and t.last_changed is defined %}
+            {% set diff = (as_timestamp(now()) - as_timestamp(t.last_changed)) | int(0) %}
+            {% set hours = (diff // 3600) %}
+            {% set minutes = (diff % 3600) // 60 %}
+            {% if hours > 0 %}
+              {{ hours }} ч {{ minutes }} мин
+            {% else %}
+              {{ minutes }} мин
+            {% endif %}
+          {% else %}
+            —
+          {% endif %}
+
+      # ------------------------------------------------------------------------
+      # Keys Duration in Zone Sensor
+      # ------------------------------------------------------------------------
+      - name: "AirTag Keys Duration"
+        unique_id: airtag_keys_duration
+        icon: mdi:timer-outline
+        state: >-
+          {% set t = states.device_tracker.airtag_keys %}
+          {% if t is defined and t.last_changed is defined %}
+            {% set diff = (as_timestamp(now()) - as_timestamp(t.last_changed)) | int(0) %}
+            {% set hours = (diff // 3600) %}
+            {% set minutes = (diff % 3600) // 60 %}
+            {% if hours > 0 %}
+              {{ hours }} ч {{ minutes }} мин
+            {% else %}
+              {{ minutes }} мин
+            {% endif %}
+          {% else %}
+            —
+          {% endif %}
+
+      # ------------------------------------------------------------------------
+      # Summary Status for all AirTags
+      # ------------------------------------------------------------------------
+      - name: "AirTags At Home Count"
+        unique_id: airtags_at_home_count
+        icon: mdi:home
+        state: >-
+          {{ [
+            is_state('device_tracker.airtag_car', 'home'),
+            is_state('device_tracker.airtag_keys', 'home')
+          ] | select('eq', true) | list | count }}
+
+      - name: "AirTags Away Count"
+        unique_id: airtags_away_count
+        icon: mdi:map-marker-distance
+        state: >-
+          {{ [
+            is_state('device_tracker.airtag_car', 'not_home'),
+            is_state('device_tracker.airtag_keys', 'not_home')
+          ] | select('eq', true) | list | count }}
+
+automation:
+  - id: airtag_car_departed_home
+    alias: "AirTag: Автомобиль выехал со стоянки"
+    mode: single
+    trigger:
+      - trigger: zone
+        entity_id: device_tracker.airtag_car
+        zone: zone.home
+        event: leave
+    condition:
+      - condition: template
+        value_template: "{{ states('device_tracker.airtag_car') != 'home' }}"
+    action:
+      - action: persistent_notification.create
+        data:
+          title: "🚗 Автомобиль в пути"
+          message: "Машина покинула парковку в {{ now().strftime('%H:%M:%S') }}."
+          notification_id: airtag_car_departed
+
+  - id: airtag_car_returned_home
+    alias: "AirTag: Автомобиль вернулся на стоянку"
+    mode: single
+    trigger:
+      - trigger: zone
+        entity_id: device_tracker.airtag_car
+        zone: zone.home
+        event: enter
+    action:
+      - action: persistent_notification.dismiss
+        data:
+          notification_id: airtag_car_departed
+      - action: persistent_notification.create
+        data:
+          title: "🏠 Автомобиль припаркован"
+          message: "Машина вернулась домой в {{ now().strftime('%H:%M:%S') }}."
+          notification_id: airtag_car_home

@@ -1,0 +1,40 @@
+# ==============================================================================
+# AirTag to Home Assistant Sync Configuration (Template)
+# Copy this file to `config.yaml` and fill in your details.
+# ==============================================================================
+
+home_assistant:
+  # Base URL of your Home Assistant instance (HTTP or HTTPS)
+  url: "http://homeassistant.local:8123"
+  
+  # Long-Lived Access Token created in Home Assistant (Profile -> Security -> Create Token)
+  token: "YOUR_LONG_LIVED_ACCESS_TOKEN_HERE"
+
+sync:
+  # Polling interval in seconds (60 seconds recommended)
+  interval_seconds: 60
+  
+  # Home Zone GPS coordinates (used for distance calculation)
+  home_coordinates:
+    latitude: 50.4501
+    longitude: 30.5234
+
+# Mapping of AirTag names as they appear in Apple Find My app
+# dev_id will be mapped to device_tracker.<dev_id> in Home Assistant
+airtags:
+  "Car":
+    dev_id: "airtag_car"
+    name: "Car"
+    icon: "mdi:car-side"
+  "Keys":
+    dev_id: "airtag_keys"
+    name: "Keys"
+    icon: "mdi:key-wireless"
+  "Backpack":
+    dev_id: "airtag_backpack"
+    name: "Backpack"
+    icon: "mdi:bag-personal"
+  "Luggage":
+    dev_id: "airtag_luggage"
+    name: "Luggage"
+    icon: "mdi:bag-suitcase"

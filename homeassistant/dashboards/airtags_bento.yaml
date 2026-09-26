@@ -1,0 +1,154 @@
+title: "AirTags & Геотрекинг"
+views:
+  # ============================================================================
+  # View 1: Radar & Live Tracking Map
+  # ============================================================================
+  - title: "Радар"
+    path: radar
+    icon: mdi:radar
+    panel: true
+    badges:
+      - type: entity
+        entity: sensor.airtags_at_home_count
+        name: Дома
+        icon: mdi:home
+        show_state: true
+      - type: entity
+        entity: sensor.airtags_away_count
+        name: Вне дома
+        icon: mdi:map-marker-distance
+        show_state: true
+    cards:
+      - type: vertical-stack
+        cards:
+          # Main Interactive Map with historical movement trails
+          - type: map
+            dark_mode: true
+            aspect_ratio: "21:9"
+            auto_fit: true
+            hours_to_show: 24
+            default_zoom: 14
+            entities:
+              - entity: device_tracker.airtag_car
+                name: Автомобиль
+              - entity: device_tracker.airtag_keys
+                name: Ключи
+            card_mod:
+              style: "ha-card { border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08); overflow: hidden; margin-bottom: 12px; }"
+
+          # Car Parking Hub & 1-Click Navigation
+          - type: custom:mushroom-template-card
+            primary: "🚗 Автомобиль: {{ 'На стоянке у дома' if is_state('device_tracker.airtag_car', 'home') else 'В городе / На выезде' }} ({{ states('sensor.airtag_car_duration') }})"
+            secondary: "Нажмите, чтобы проложить пешеходный маршрут к авто в Apple Maps"
+            icon: mdi:car-connected
+            icon_color: "{{ 'green' if is_state('device_tracker.airtag_car', 'home') else 'light-blue' }}"
+            layout: horizontal
+            tap_action:
+              action: url
+              url_path: "https://maps.apple.com/?daddr={{ state_attr('device_tracker.airtag_car', 'latitude') }},{{ state_attr('device_tracker.airtag_car', 'longitude') }}&dirflg=w"
+            card_mod:
+              style: "ha-card { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; margin-bottom: 12px; cursor: pointer; }"
+
+          # 2-Column Asset Status Grid
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: custom:mushroom-template-card
+                primary: Автомобиль
+                secondary: "Стоянка: {{ states('sensor.airtag_car_duration') }} • Точность ±5 м"
+                icon: mdi:car-side
+                icon_color: "{{ 'green' if is_state('device_tracker.airtag_car', 'home') else 'light-blue' }}"
+                layout: horizontal
+                tap_action:
+                  action: more-info
+                  entity: device_tracker.airtag_car
+                card_mod:
+                  style: "ha-card { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 12px; }"
+              - type: custom:mushroom-template-card
+                primary: Ключи
+                secondary: "В зоне: {{ states('sensor.airtag_keys_duration') }} • Точность ±5 м"
+                icon: mdi:key-wireless
+                icon_color: "{{ 'green' if is_state('device_tracker.airtag_keys', 'home') else 'light-blue' }}"
+                layout: horizontal
+                tap_action:
+                  action: more-info
+                  entity: device_tracker.airtag_keys
+                card_mod:
+                  style: "ha-card { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 12px; }"
+
+  # ============================================================================
+  # View 2: Analytics & Trends (Google Tracks Vibe)
+  # ============================================================================
+  - title: "Аналитика & Тренды"
+    path: analytics
+    icon: mdi:chart-timeline-variant-shimmer
+    type: sections
+    max_columns: 3
+    sections:
+      # Mobility & Activity
+      - title: "⏱️ Мобильность и активность"
+        cards:
+          - type: custom:apexcharts-card
+            header:
+              show: true
+              title: "Активность вне дома за 7 дней (ч)"
+              show_states: false
+            graph_span: 7d
+            span:
+              end: day
+            apex_config:
+              chart:
+                height: 220
+                stacked: true
+                toolbar: { show: false }
+              legend: { position: "top", horizontalAlign: "left" }
+              plotOptions:
+                bar: { borderRadius: 4, columnWidth: "45%" }
+            series:
+              - entity: device_tracker.airtag_car
+                name: Автомобиль
+                type: column
+                transform: "return x === 'home' ? 0 : 1;"
+                group_by: { func: sum, duration: 1d }
+                color: "#22c55e"
+              - entity: device_tracker.airtag_keys
+                name: Ключи
+                type: column
+                transform: "return x === 'home' ? 0 : 1;"
+                group_by: { func: sum, duration: 1d }
+                color: "#38bdf8"
+            card_mod:
+              style: "ha-card { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; }"
+
+      # Logbook Chronology
+      - title: "📜 Журнал стоянок и поездок"
+        cards:
+          - type: logbook
+            title: "События перемещений (48 ч)"
+            hours_to_show: 48
+            entities:
+              - device_tracker.airtag_car
+              - device_tracker.airtag_keys
+            card_mod:
+              style: "ha-card { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 8px; max-height: 420px; overflow-y: auto; }"
+
+      # Co-presence & Safety
+      - title: "🛡️ Безопасность и Связка"
+        cards:
+          - type: custom:mushroom-template-card
+            primary: "🚗 Охрана стоянки авто"
+            secondary: "Стоянка: {{ states('sensor.airtag_car_duration') }} • Периметр спокоен"
+            icon: mdi:shield-car
+            icon_color: green
+            layout: horizontal
+            card_mod:
+              style: "ha-card { background: rgba(34, 197, 94, 0.06); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 14px; margin-bottom: 8px; }"
+          - type: custom:mushroom-template-card
+            primary: "🔑 Ключи"
+            secondary: "В зоне: {{ states('sensor.airtag_keys_duration') }} • Сигнал стабилен"
+            icon: mdi:key-wireless
+            icon_color: light-blue
+            layout: horizontal
+            card_mod:
+              style: "ha-card { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; }"
